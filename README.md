@@ -83,6 +83,10 @@ You do not need to integrate with a real storage engine or database. It is fine 
 ## Documentation
 Please document your key design considerations and assumptions made when the test is performed as a take away exercise.
 
+### Swagger
+
+This template uses [Swaggo](github.com/swaggo/swag) to autodocument the API and create a Swagger spec. The Swagger UI is available at `http://localhost:8080/swagger/index.html`.
+
 ## Implementation considerations
 We expect the following with each submission:
 - Code must compile
@@ -94,13 +98,15 @@ We expect the following with each submission:
 ```
 main.go - a skeleton Gin API
 imposters/ - contains the bank simulator configuration. Don't change this
-
+docs/docs.go - Generated file by Swaggo
 .editorconfig - don't change this. It ensures a consistent set of rules for submissions when reformatting code
 docker-compose.yml - configures the bank simulator
 .goreleaser.yml - Goreleaser configuration
 ```
 
 Feel free to change the structure of the solution, use a different test library etc.
+
+
 
 ## Bank simulator
 A bank simulator is provided. The simulator provides responses based on a set of known test cards,
@@ -153,4 +159,4 @@ The configuration is stored in the `imposters` directory of this repo as an [ejs
 engineers would not use an EJS template, however for this test it works well. The preferred way to use Mountebank or
 similar products (e.g. WireMock) is to call it's API during your test setup via a client library. This ensures you
 have full control of how the server responds and it ensures your remote test doubles do not become overly complex
-trying to handle lots of different scenarios. Rather the mock is programmed based of what a specific test requires."# payment-gateway-challenge-dotnet" 
+trying to handle lots of different scenarios. Rather the mock is programmed based of what a specific test requires.

@@ -13,3 +13,6 @@ docker-compose.yml - configures the bank simulator
 ```
 
 Feel free to change the structure of the solution, use a different test library etc.
+
+### Swagger
+This template uses Swaggo to autodocument the API and create a Swagger spec. The Swagger UI is available at http://localhost:8080/swagger/index.html.

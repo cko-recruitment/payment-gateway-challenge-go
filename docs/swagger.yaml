@@ -1,16 +1,90 @@
 basePath: /
 definitions:
+  common.PaymentResponse:
+    properties:
+      amount:
+        type: integer
+      card_number:
+        type: string
+      currency:
+        type: string
+      expiry_month:
+        type: integer
+      expiry_year:
+        type: integer
+      id:
+        type: string
+      status:
+        type: string
+    type: object
   main.Pong:
     properties:
       message:
         type: string
     type: object
-host: localhost:8080
+host: localhost:8090
 info:
   contact: {}
   description: Interview challenge for building a Payment Gateway - Go version
   title: Payment Gateway Challenge Go
 paths:
+  /make_payment:
+    post:
+      parameters:
+      - description: Card number, digits only
+        in: query
+        name: card_number
+        required: true
+        type: string
+      - description: Expiry year
+        in: query
+        name: expiry_year
+        required: true
+        type: integer
+      - description: month, from January=1 through December=12
+        in: query
+        name: expiry_month
+        required: true
+        type: integer
+      - description: CVV/CSC
+        in: query
+        name: cvv
+        required: true
+        type: string
+      - description: ISO 4217 letter code
+        in: query
+        name: cyrrency
+        required: true
+        type: string
+      - description: amount, in currency cents
+        in: query
+        name: amount
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.PaymentResponse'
+        "400":
+          description: Bad Request
+          schema: {}
+  /pay:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.PaymentResponse'
+        "400":
+          description: Bad Request
+          schema: {}
   /ping:
     get:
       produces:
@@ -20,6 +94,24 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/main.Pong'
+  /recall:
+    get:
+      parameters:
+      - description: id of the (un)authorized payment
+        in: query
+        name: payment_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.PaymentResponse'
+        "400":
+          description: Bad Request
+          schema: {}
 securityDefinitions:
   BasicAuth:
     type: basic

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Simple local payment processor</title>
+	</head>
+	<body>
+
+		<h1>Make a payment</h1>
+		<form action="/make_payment" method="POST">
+			<p><label>Card number</label>&nbsp;<input type="text" name="card_number"/></p>
+			<p><label>Valid until: year</label>&nbsp;<input type="text" name="expiry_year"/>&nbsp;
+			<label>month</label>&nbsp;<input type="text" name="expiry_month"/></p>
+			<p><label>CVV</label>&nbsp;<input type="text" name="cvv"/></p>
+			<p><label>amount (use decimal dot for cents)</label>&nbsp;<input type="text" name="amount"/>&nbsp;
+			<label>CCY</label>&nbsp;<input type="text" name="currency"/></p>
+			<p><input type="submit"/></p>
+		</form>
+		<h1>Retrieve previous payment data</h1>
+		<form action="/recall" method="GET">
+			<p><label>Payment id</label>&nbsp;<input type="text" name="payment_id"/></p>
+			<p><input type="submit"/></p>
+		</form>
+	</body>
+</html>

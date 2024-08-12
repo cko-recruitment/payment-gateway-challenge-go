@@ -9,6 +9,7 @@ import (
 
 	"github.com/cko-recruitment/payment-gateway-challenge-go/docs"
 	"github.com/cko-recruitment/payment-gateway-challenge-go/internal/api"
+	"github.com/cko-recruitment/payment-gateway-challenge-go/internal/validator"
 )
 
 var (
@@ -54,6 +55,7 @@ func run() error {
 		}
 	}()
 
+	validator.NewValidator()
 	api := api.New()
 	if err := api.Run(ctx, ":8090"); err != nil {
 		return err

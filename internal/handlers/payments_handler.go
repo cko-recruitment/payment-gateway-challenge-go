@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/cko-recruitment/payment-gateway-challenge-go/internal/models"
 	"github.com/cko-recruitment/payment-gateway-challenge-go/internal/repository"
+	"github.com/cko-recruitment/payment-gateway-challenge-go/internal/validator"
 	"github.com/go-chi/chi"
 )
 
@@ -33,12 +35,29 @@ func (h *PaymentsHandler) GetHandler() http.HandlerFunc {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 		} else {
-			w.WriteHeader(http.StatusNoContent)
+			w.WriteHeader(http.StatusNotFound)
 		}
 	}
 }
 
 func (ph *PaymentsHandler) PostHandler() http.HandlerFunc {
-	//TODO
-	return nil
+	return func(w http.ResponseWriter, r *http.Request) {
+		var paymentRequest models.PostPaymentRequest
+		if err := json.NewDecoder(r.Body).Decode(&paymentRequest); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		if err := validatePaymentRequest(paymentRequest); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+	}
+}
+
+func validatePaymentRequest(pr models.PostPaymentRequest) error {
+	validator := validator.GetValidator()
+	return validator.ValidateStruct(&pr)
 }

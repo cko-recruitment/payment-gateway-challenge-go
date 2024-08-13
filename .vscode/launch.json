@@ -10,6 +10,15 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
+        },
+        {
+            "name": "Run Tests",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${workspaceFolder}/internal/handlers",
+            "buildFlags": "",
+            "trace": "verbose"
         }
     ]
 }

@@ -10,4 +10,9 @@ services:
       - type: bind
         source: ./imposters
         target: /imposters
-      
+  payment_service:
+    container_name: payment_service
+    build: .
+    command: ./main
+    ports:
+      - "8090:8090"

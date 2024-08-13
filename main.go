@@ -60,7 +60,7 @@ func run() error {
 	validator.NewValidator()
 
 	// Initialize the PaymentProcessor
-	paymentProcessor.NewBankPaymentProcessor("http://localhost:8080")
+	paymentProcessor.NewBankPaymentProcessor("http://bank_simulator:8080")
 	api := api.New()
 	if err := api.Run(ctx, ":8090"); err != nil {
 		return err

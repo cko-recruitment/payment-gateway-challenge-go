@@ -10,6 +10,11 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
+            "env": {
+                "ENV": "Debug",
+                "PORT": "8090",
+                "BANK_PAYMENT_PROCESSOR_BASE_URL": "http://localhost:8080"
+            }
         },
         {
             "name": "Run Tests",

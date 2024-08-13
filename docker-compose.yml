@@ -16,3 +16,7 @@ services:
     command: ./main
     ports:
       - "8090:8090"
+    environment:
+      - ENV=prod
+      - BANK_PAYMENT_PROCESSOR_BASE_URL=http://bank_simulator:8080
+      - PORT=8090

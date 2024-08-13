@@ -14,9 +14,7 @@ import (
 )
 
 var (
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
+	env = os.Getenv("ENV")
 )
 
 //	@title			Payment Gateway Challenge Go
@@ -27,8 +25,8 @@ var (
 
 // @securityDefinitions.basic	BasicAuth
 func main() {
-	fmt.Printf("version %s, commit %s, built at %s\n", version, commit, date)
-	docs.SwaggerInfo.Version = version
+	fmt.Printf("environment: %s\n", env)
+	docs.SwaggerInfo.Version = env
 
 	err := run()
 	if err != nil {
@@ -60,9 +58,10 @@ func run() error {
 	validator.NewValidator()
 
 	// Initialize the PaymentProcessor
-	paymentProcessor.NewBankPaymentProcessor("http://bank_simulator:8080")
+	paymentProcessor.NewBankPaymentProcessor(os.Getenv("BANK_PAYMENT_PROCESSOR_BASE_URL"))
 	api := api.New()
-	if err := api.Run(ctx, ":8090"); err != nil {
+	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
+	if err := api.Run(ctx, port); err != nil {
 		return err
 	}
 

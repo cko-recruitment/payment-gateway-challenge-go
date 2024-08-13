@@ -61,5 +61,5 @@ func (a *Api) setupRouter() {
 	a.router.Get("/swagger/*", a.SwaggerHandler())
 
 	a.router.Get("/api/payments/{id}", a.GetPaymentHandler())
-	a.router.Post("/api/payments", a.PostPaymentHandler()) // TODO: Mount
+	a.router.Post("/api/payments", a.PostPaymentHandler())
 }

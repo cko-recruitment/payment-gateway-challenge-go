@@ -1,5 +1,6 @@
 package payment_processor
 
+// PaymentProcessor interface to allow code flexibility when introducing other processors like paypal etc.
 type PaymentProcessor interface {
 	ProcessPayment(paymentRequest ProcessPaymentRequest) (*ProcessPaymentResponse, error)
 }

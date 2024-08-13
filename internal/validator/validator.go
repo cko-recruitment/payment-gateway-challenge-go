@@ -16,6 +16,7 @@ var (
 	once     sync.Once
 )
 
+// NewValidator initializes a validator as a singleton
 func NewValidator() *Validator {
 	once.Do(func() {
 		instance = &Validator{
@@ -27,14 +28,17 @@ func NewValidator() *Validator {
 	return instance
 }
 
+// GetValidator returns an instance of the validator
 func GetValidator() *Validator {
 	return instance
 }
 
+// ValidateStruct validates any struct according to validation rules embedded in the struct
 func (v *Validator) ValidateStruct(s interface{}) error {
 	return v.validate.Struct(s)
 }
 
+// registerValidations registers custom written validations
 func (v *Validator) registerValidations() {
 	err := instance.validate.RegisterValidation("int_len", validateNumberOfDigits)
 	if err != nil {

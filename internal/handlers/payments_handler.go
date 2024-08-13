@@ -27,6 +27,17 @@ func NewPaymentsHandler(storage *repository.PaymentsRepository, paymentProcessor
 	}
 }
 
+// @Summary      Get payment by ID
+// @Description  get payment by ID
+// @Tags         payments
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Payment ID"
+// @Success      200  {object}  models.GetPaymentResponse
+// @Failure      400  {object}  string
+// @Failure      404  {object}  string
+// @Failure      500  {object}  string
+// @Router       /api/payments/{id} [get]
 // GetHandler returns an http.HandlerFunc that handles HTTP GET requests.
 // It retrieves a payment record by its ID from the storage.
 // The ID is expected to be part of the URL.
@@ -47,6 +58,18 @@ func (h *PaymentsHandler) GetHandler() http.HandlerFunc {
 	}
 }
 
+// @Summary      Post payment
+// @Description  Create a payment request
+// @Tags         payments
+// @Accept       json
+// @Produce      json
+// @Param        body  body     models.PostPaymentRequest  true  "Payment details"
+// @Success      200  {object}  models.PostPaymentResponse
+// @Failure      400  {object}  string
+// @Failure      500  {object}  string
+// @Router       /api/payments [post]
+// PostHandler returns an http.HandlerFunc that handles HTTP Post requests.
+// It saves and processes a payment.
 func (ph *PaymentsHandler) PostHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// 1. Decode post payment request body
@@ -87,11 +110,13 @@ func (ph *PaymentsHandler) PostHandler() http.HandlerFunc {
 	}
 }
 
+// validatePaymentRequest validates the payment request body as defined in models.PostPaymentRequest
 func validatePaymentRequest(pr models.PostPaymentRequest) error {
 	validator := validator.GetValidator()
 	return validator.ValidateStruct(&pr)
 }
 
+// processPayment calls the payment processor to process the payment
 func processPayment(pr models.PostPaymentRequest, pp paymentProcessor.PaymentProcessor) (*models.PostPaymentResponse, error) {
 	// 1. Create process payment request
 	processPaymentReq := paymentProcessor.ProcessPaymentRequest{

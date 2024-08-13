@@ -36,7 +36,7 @@ func validateDateInFuture(fl validator.FieldLevel) bool {
 
 func validateMonthAndYearInFuture(fl validator.FieldLevel) bool {
 	v := fl.Field().Int()
-	m := fl.Parent().FieldByName("expiry_month").Int()
+	m := fl.Parent().FieldByName("ExpiryMonth").Int()
 	date := time.Date(int(v), time.Month(m), 1, 0, 0, 0, 0, time.UTC)
 	return time.Now().Before(date)
 }

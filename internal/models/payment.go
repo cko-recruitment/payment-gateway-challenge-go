@@ -11,7 +11,7 @@ type Payment struct {
 }
 
 type PostPaymentRequest struct {
-	CardNumber  string `json:"card_number" validate:"required,numeric,min=14,max=19,credit_card"`
+	CardNumber  string `json:"card_number" validate:"required,numeric,min=14,max=19"`
 	ExpiryMonth int    `json:"expiry_month" validate:"required,min=1,max=12"`
 	ExpiryYear  int    `json:"expiry_year" validate:"required,int_len=4,month_year_gt"`
 	Currency    string `json:"currency" validate:"required,len=3,iso4217"`
@@ -37,12 +37,4 @@ type GetPaymentResponse struct {
 	ExpiryYear         int    `json:"expiry_year" validate:"required,int_len=4,month_year_gt"`
 	Currency           string `json:"currency" validate:"required,len=3,iso4217"`
 	Amount             int    `json:"amount" validate:"required"`
-}
-
-type ProcessPaymentPayload struct {
-	CardNumber string `json:"card_number" validate:"required,numeric,min=14,max=19,credit_card"`
-	ExpiryDate string `json:"expiry_date" validate:"required,str_date_gt"`
-	Currency   string `json:"currency" validate:"required,len=3,iso4217"`
-	Amount     int    `json:"amount" validate:"required"`
-	Cvv        int    `json:"cvv" validate:"required,int_min_len=3,int_max_len=4"`
 }

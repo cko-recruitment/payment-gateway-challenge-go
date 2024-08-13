@@ -15,16 +15,97 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ping": {
-            "get": {
+        "/api/payments": {
+            "post": {
+                "description": "Create a payment request",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Post payment",
+                "parameters": [
+                    {
+                        "description": "Payment details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PostPaymentRequest"
+                        }
+                    }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.Pong"
+                            "$ref": "#/definitions/models.PostPaymentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/payments/{id}": {
+            "get": {
+                "description": "get payment by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Get payment by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Payment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetPaymentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -32,11 +113,120 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "main.Pong": {
+        "models.GetPaymentResponse": {
             "type": "object",
+            "required": [
+                "amount",
+                "card_number_last_four",
+                "currency",
+                "expiry_month",
+                "expiry_year",
+                "id",
+                "payment_status"
+            ],
             "properties": {
-                "message": {
+                "amount": {
+                    "type": "integer"
+                },
+                "card_number_last_four": {
+                    "type": "integer"
+                },
+                "currency": {
                     "type": "string"
+                },
+                "expiry_month": {
+                    "type": "integer",
+                    "maximum": 12,
+                    "minimum": 1
+                },
+                "expiry_year": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "payment_status": {
+                    "type": "string",
+                    "enum": [
+                        "Authorized",
+                        "Declined"
+                    ]
+                }
+            }
+        },
+        "models.PostPaymentRequest": {
+            "type": "object",
+            "required": [
+                "amount",
+                "card_number",
+                "currency",
+                "cvv",
+                "expiry_month",
+                "expiry_year"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "card_number": {
+                    "type": "string",
+                    "maxLength": 19,
+                    "minLength": 14
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "cvv": {
+                    "type": "integer"
+                },
+                "expiry_month": {
+                    "type": "integer",
+                    "maximum": 12,
+                    "minimum": 1
+                },
+                "expiry_year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PostPaymentResponse": {
+            "type": "object",
+            "required": [
+                "amount",
+                "card_number_last_four",
+                "currency",
+                "expiry_month",
+                "expiry_year",
+                "id",
+                "payment_status"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "card_number_last_four": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "expiry_month": {
+                    "type": "integer",
+                    "maximum": 12,
+                    "minimum": 1
+                },
+                "expiry_year": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "payment_status": {
+                    "type": "string",
+                    "enum": [
+                        "Authorized",
+                        "Declined"
+                    ]
                 }
             }
         }

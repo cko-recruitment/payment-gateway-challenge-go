@@ -16,12 +16,14 @@ import (
 )
 
 type PaymentsHandler struct {
-	storage *repository.PaymentsRepository
+	storage          *repository.PaymentsRepository
+	paymentProcessor paymentProcessor.PaymentProcessor
 }
 
-func NewPaymentsHandler(storage *repository.PaymentsRepository) *PaymentsHandler {
+func NewPaymentsHandler(storage *repository.PaymentsRepository, paymentProcessor paymentProcessor.PaymentProcessor) *PaymentsHandler {
 	return &PaymentsHandler{
-		storage: storage,
+		storage:          storage,
+		paymentProcessor: paymentProcessor,
 	}
 }
 
@@ -63,7 +65,7 @@ func (ph *PaymentsHandler) PostHandler() http.HandlerFunc {
 		}
 
 		// 3. Process payment
-		payment, err := processPayment(paymentRequest)
+		payment, err := processPayment(paymentRequest, ph.paymentProcessor)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
@@ -90,7 +92,7 @@ func validatePaymentRequest(pr models.PostPaymentRequest) error {
 	return validator.ValidateStruct(&pr)
 }
 
-func processPayment(pr models.PostPaymentRequest) (*models.PostPaymentResponse, error) {
+func processPayment(pr models.PostPaymentRequest, pp paymentProcessor.PaymentProcessor) (*models.PostPaymentResponse, error) {
 	// 1. Create process payment request
 	processPaymentReq := paymentProcessor.ProcessPaymentRequest{
 		CardNumber: pr.CardNumber,
@@ -101,8 +103,7 @@ func processPayment(pr models.PostPaymentRequest) (*models.PostPaymentResponse, 
 	}
 
 	// 2. Process payment
-	bankPaymentProcessor := paymentProcessor.GetBankPaymentProcessor()
-	processPaymentResp, err := bankPaymentProcessor.ProcessPayment(processPaymentReq)
+	processPaymentResp, err := pp.ProcessPayment(processPaymentReq)
 	if err != nil {
 		return nil, err
 	}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/cko-recruitment/payment-gateway-challenge-go/docs"
 	"github.com/cko-recruitment/payment-gateway-challenge-go/internal/handlers"
+	paymentProcessor "github.com/cko-recruitment/payment-gateway-challenge-go/third_party/payment_processor"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -34,13 +35,13 @@ func (a *Api) SwaggerHandler() http.HandlerFunc {
 
 // GetPaymentHandler returns an http.HandlerFunc that handles Payments GET requests.
 func (a *Api) GetPaymentHandler() http.HandlerFunc {
-	h := handlers.NewPaymentsHandler(a.paymentsRepo)
+	h := handlers.NewPaymentsHandler(a.paymentsRepo, paymentProcessor.GetBankPaymentProcessor())
 
 	return h.GetHandler()
 }
 
 // PostPaymentHandler returns an http.HandlerFunc that handles Payments Post requests.
 func (a *Api) PostPaymentHandler() http.HandlerFunc {
-	h := handlers.NewPaymentsHandler(a.paymentsRepo)
+	h := handlers.NewPaymentsHandler(a.paymentsRepo, paymentProcessor.GetBankPaymentProcessor())
 	return h.PostHandler()
 }

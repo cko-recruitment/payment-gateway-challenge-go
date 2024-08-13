@@ -92,7 +92,7 @@ func TestPostPaymentHandler(t *testing.T) {
 	validator.NewValidator()
 	payments := NewPaymentsHandler(ps, &paymentProcessor.MockPaymentProcessor{})
 
-	t.Run("Post Payment Successfully", func(t *testing.T) {
+	t.Run("Post payment successfully and payement is authorized", func(t *testing.T) {
 		var buf bytes.Buffer
 		paymentRequestBody := &models.PostPaymentRequest{
 			CardNumber:  "2222405343248112",
@@ -168,6 +168,84 @@ func TestPostPaymentHandler(t *testing.T) {
 		assert.NotNil(t, ps.GetPayment(id))
 
 	})
+
+	t.Run("Post payment successfully and payement is declined", func(t *testing.T) {
+		var buf bytes.Buffer
+		paymentRequestBody := &models.PostPaymentRequest{
+			CardNumber:  "2222405343248112",
+			ExpiryMonth: 10,
+			ExpiryYear:  2035,
+			Currency:    "GBP",
+			Amount:      100,
+			Cvv:         123,
+		}
+		json.NewEncoder(&buf).Encode(paymentRequestBody)
+
+		mockPaymentProcessor := &paymentProcessor.MockPaymentProcessor{
+			ProcessPaymentFunc: func(req paymentProcessor.ProcessPaymentRequest) (*paymentProcessor.ProcessPaymentResponse, error) {
+				return &paymentProcessor.ProcessPaymentResponse{
+					Authorized: false,
+				}, nil
+			},
+		}
+
+		payments = NewPaymentsHandler(ps, mockPaymentProcessor)
+		r.Post("/api/payments", payments.PostHandler())
+		req, _ := http.NewRequest("POST", "/api/payments", &buf)
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		resp := w.Result()
+
+		// Check the body is not nil
+		assert.NotNil(t, w.Body)
+
+		// Check the HTTP status code in the response
+		if status := w.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusOK)
+		}
+
+		// Check that specific keys and values are present
+		var responseBody map[string]interface{}
+		err := json.NewDecoder(resp.Body).Decode(&responseBody)
+		if err != nil {
+			t.Fatalf("Failed to parse response body: %v", err)
+		}
+
+		if _, ok := responseBody["id"]; !ok {
+			t.Error("Expected response body to contain an id")
+		}
+
+		if status, ok := responseBody["payment_status"]; !ok || status != "Declined" {
+			t.Errorf("Expected payment_status 'Declined', got '%v'", status)
+		}
+
+		if amount, ok := responseBody["amount"].(float64); !ok || amount != float64(paymentRequestBody.Amount) {
+			t.Errorf("Expected amount %v, got %v", paymentRequestBody.Amount, amount)
+		}
+
+		if currency, ok := responseBody["currency"]; !ok || currency != paymentRequestBody.Currency {
+			t.Errorf("Expected currency %v, got '%v'", paymentRequestBody.Currency, currency)
+		}
+
+		if cardNumberLastFour, ok := responseBody["card_number_last_four"].(float64); !ok || cardNumberLastFour != 8112 {
+			t.Errorf("Expected cardNumberLastFour 8112, got '%v'", cardNumberLastFour)
+		}
+
+		if expiryMonth, ok := responseBody["expiry_month"].(float64); !ok || expiryMonth != float64(paymentRequestBody.ExpiryMonth) {
+			t.Errorf("Expected expiryMonth %v, got '%v'", paymentRequestBody.ExpiryMonth, expiryMonth)
+		}
+
+		if expiryYear, ok := responseBody["expiry_year"].(float64); !ok || expiryYear != float64(paymentRequestBody.ExpiryYear) {
+			t.Errorf("Expected expiryYear %v, got '%v'", paymentRequestBody.ExpiryYear, expiryYear)
+		}
+
+		// Check that the payment was saved in the storage
+		id, _ := responseBody["id"].(string)
+		assert.NotNil(t, ps.GetPayment(id))
+
+	})
+
 	t.Run("Post Payment will fail as paymentProcessor returned a 400", func(t *testing.T) {
 		var buf bytes.Buffer
 		json.NewEncoder(&buf).Encode(&models.PostPaymentRequest{

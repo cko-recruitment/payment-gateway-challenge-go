@@ -5,7 +5,7 @@
         "title": "Payment Gateway Challenge Go",
         "contact": {}
     },
-    "host": "localhost:8080",
+    "host": "localhost:8090",
     "basePath": "/",
     "paths": {
         "/ping": {

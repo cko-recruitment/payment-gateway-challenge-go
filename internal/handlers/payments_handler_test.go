@@ -65,8 +65,6 @@ func TestGetPaymentHandler(t *testing.T) {
 
 		r.ServeHTTP(w, req)
 
-		// Check the HTTP status code in the response
-
-		assert.Equal(t, w.Code, http.StatusNotFound)
+		assert.Equal(t, http.StatusNotFound, w.Code)
 	})
 }

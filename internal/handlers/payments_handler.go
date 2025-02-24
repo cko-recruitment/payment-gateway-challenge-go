@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/cko-recruitment/payment-gateway-challenge-go/internal/repository"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 type PaymentsHandler struct {

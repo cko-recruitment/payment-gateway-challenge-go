@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/cko-recruitment/payment-gateway-challenge-go/internal/repository"
-	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"golang.org/x/sync/errgroup"
 )
 
